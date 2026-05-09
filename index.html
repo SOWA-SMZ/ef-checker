@@ -5,157 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EF WEAR 互換チェッカー</title>
 <style>
-  :root {
-    --bg:#f5f4f0;--bg2:#ffffff;--bg3:#ececea;
-    --text:#1a1a18;--text2:#6b6b66;--text3:#9b9b96;
-    --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
-    --ok-bg:#eaf3de;--ok-border:#639922;--ok-text:#27500a;
-    --note-bg:#faeeda;--note-border:#ba7517;--note-text:#633806;
-    --ng-bg:#fcebeb;--ng-border:#a32d2d;--ng-text:#501313;
-    --accent:#1a5276;--radius:10px;--radius-sm:6px;
-  }
-  @media(prefers-color-scheme:dark){
-    :root{
-      --bg:#161614;--bg2:#1e1e1c;--bg3:#2a2a28;
-      --text:#e8e8e2;--text2:#a0a09a;--text3:#6a6a64;
-      --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-      --ok-bg:#173404;--ok-border:#639922;--ok-text:#c0dd97;
-      --note-bg:#412402;--note-border:#ba7517;--note-text:#fac775;
-      --ng-bg:#501313;--ng-border:#a32d2d;--ng-text:#f7c1c1;
-      --accent:#5b9bd5;
-    }
-  }
+  :root{--bg:#f5f4f0;--bg2:#fff;--bg3:#ececea;--text:#1a1a18;--text2:#6b6b66;--text3:#9b9b96;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--ok-bg:#eaf3de;--ok-border:#639922;--ok-text:#27500a;--note-bg:#faeeda;--note-border:#ba7517;--note-text:#633806;--ng-bg:#fcebeb;--ng-border:#a32d2d;--ng-text:#501313;--accent:#1a5276;--r:10px;--rs:6px;}
+  @media(prefers-color-scheme:dark){:root{--bg:#161614;--bg2:#1e1e1c;--bg3:#2a2a28;--text:#e8e8e2;--text2:#a0a09a;--text3:#6a6a64;--border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.14);--ok-bg:#173404;--ok-border:#639922;--ok-text:#c0dd97;--note-bg:#412402;--note-border:#ba7517;--note-text:#fac775;--ng-bg:#501313;--ng-border:#a32d2d;--ng-text:#f7c1c1;--accent:#5b9bd5;}}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
   header{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
   .logo{display:flex;align-items:center;gap:12px;}
-  .logo-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:0.08em;padding:4px 10px;border-radius:4px;}
+  .logo-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:4px;}
   .logo-title{font-size:15px;font-weight:600;}
-  .admin-btn{font-size:12px;padding:6px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
-  .admin-btn:hover{background:var(--bg3);color:var(--text);}
+  .admin-btn{font-size:12px;padding:6px 14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text2);cursor:pointer;font-family:inherit;}
+  .admin-btn:hover{background:var(--bg3);}
   .main{max-width:720px;margin:0 auto;padding:24px 16px 60px;}
-  .admin-panel{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;}
-  .admin-panel.open{display:block;animation:fadeIn 0.2s ease;}
-  .admin-title{font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-  .admin-note{font-size:12px;color:var(--note-text);background:var(--note-bg);border:1px solid var(--note-border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;line-height:1.7;}
-  .section-label{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin:16px 0 8px;}
-  .item-list{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
-  .item-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;}
-  .item-row span{flex:1;}.item-row .small{color:var(--text3);font-size:11px;}
-  .del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 2px;line-height:1;}
-  .del-btn:hover{color:var(--ng-border);}
-  .add-row{display:flex;gap:6px;margin-bottom:4px;flex-wrap:wrap;}
-  .add-row input,.fan-select{padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;background:var(--bg);color:var(--text);font-family:inherit;}
-  .add-row input{flex:1;min-width:90px;}
-  .fan-select{width:100%;font-size:13px;margin-bottom:10px;}
-  .add-btn{padding:7px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;}
-  .add-btn:hover{background:var(--bg3);}
-  .compat-editor{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;}
-  .ce-title{font-size:12px;font-weight:600;margin-bottom:10px;}
-  .ce-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-  .ce-item{display:flex;align-items:center;gap:6px;font-size:12px;}
-  .ce-item label{flex:1;color:var(--text2);}
-  .ce-item select{padding:4px 6px;border:1px solid var(--border2);border-radius:4px;font-size:11px;background:var(--bg);color:var(--text);font-family:inherit;}
-  .notes-area textarea{width:100%;padding:8px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:12px;background:var(--bg);color:var(--text);resize:vertical;min-height:80px;line-height:1.7;font-family:inherit;}
-  .dl-btn{width:100%;padding:10px;margin-top:10px;border:none;border-radius:var(--radius-sm);background:var(--accent);color:#fff;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:opacity 0.15s;}
-  .dl-btn:hover{opacity:0.85;}
-  .search-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;}
-  .search-label{font-size:11px;color:var(--text3);margin-bottom:8px;letter-spacing:0.04em;text-transform:uppercase;}
-  .search-row{display:flex;gap:8px;margin-bottom:16px;}
-  .search-row input{flex:1;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:15px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s;font-family:inherit;}
-  .search-row input:focus{border-color:var(--accent);}
-  .search-row button{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity 0.15s;}
-  .search-row button:hover{opacity:0.85;}
-  .tag-group{margin-bottom:12px;}
-  .tag-group-label{font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:0.04em;}
+  .admin-panel{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+  .admin-panel.open{display:block;}
+  .admin-note{font-size:12px;color:var(--note-text);background:var(--note-bg);border:1px solid var(--note-border);border-radius:var(--rs);padding:10px 14px;margin-bottom:14px;line-height:1.7;}
+  .slabel{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin:16px 0 8px;}
+  .ilist{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+  .irow{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:7px 12px;font-size:12px;}
+  .irow span{flex:1;}.irow .sm{color:var(--text3);font-size:11px;}
+  .dbtn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 2px;}
+  .dbtn:hover{color:var(--ng-border);}
+  .arow{display:flex;gap:6px;margin-bottom:4px;flex-wrap:wrap;}
+  .arow input,.fsel{padding:7px 10px;border:1px solid var(--border2);border-radius:var(--rs);font-size:12px;background:var(--bg);color:var(--text);font-family:inherit;}
+  .arow input{flex:1;min-width:90px;}.fsel{width:100%;font-size:13px;margin-bottom:10px;}
+  .abtn{padding:7px 14px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--bg);color:var(--text);cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;}
+  .abtn:hover{background:var(--bg3);}
+  .ced{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:10px;}
+  .cet{font-size:12px;font-weight:600;margin-bottom:10px;}
+  .ceg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  .cei{display:flex;align-items:center;gap:6px;font-size:12px;}
+  .cei label{flex:1;color:var(--text2);}
+  .cei select{padding:4px 6px;border:1px solid var(--border2);border-radius:4px;font-size:11px;background:var(--bg);color:var(--text);font-family:inherit;}
+  .narea textarea{width:100%;padding:8px;border:1px solid var(--border2);border-radius:var(--rs);font-size:12px;background:var(--bg);color:var(--text);resize:vertical;min-height:80px;line-height:1.7;font-family:inherit;}
+  .dlbtn{width:100%;padding:10px;margin-top:10px;border:none;border-radius:var(--rs);background:var(--accent);color:#fff;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;}
+  .dlbtn:hover{opacity:.85;}
+  .scard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px;}
+  .sl{font-size:11px;color:var(--text3);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;}
+  .srow{display:flex;gap:8px;margin-bottom:16px;}
+  .srow input{flex:1;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--rs);font-size:15px;background:var(--bg);color:var(--text);outline:none;font-family:inherit;}
+  .srow input:focus{border-color:var(--accent);}
+  .srow button{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .srow button:hover{opacity:.85;}
+  .tg{margin-bottom:12px;}
+  .tgl{font-size:11px;color:var(--text3);margin-bottom:6px;}
   .tags{display:flex;flex-wrap:wrap;gap:5px;}
-  .tag{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all 0.12s;font-family:inherit;}
-  .tag:hover{border-color:var(--accent);color:var(--accent);background:var(--bg2);}
+  .tag{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;}
+  .tag:hover{border-color:var(--accent);color:var(--accent);}
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
-  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
-  .ldot{width:10px;height:10px;border-radius:3px;}
-  .result-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;animation:fadeIn 0.2s ease;}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-  .rtitle{font-size:16px;font-weight:700;margin-bottom:2px;}
-  .rsub{font-size:12px;color:var(--text3);margin-bottom:16px;}
-  .csec{margin-bottom:12px;}
-  .clabel{font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase;}
+  .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
+  .ld{width:10px;height:10px;border-radius:3px;}
+  .rcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px;animation:fi .2s ease;}
+  @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .rt{font-size:16px;font-weight:700;margin-bottom:2px;}
+  .rs{font-size:12px;color:var(--text3);margin-bottom:16px;}
+  .cs{margin-bottom:12px;}
+  .cl{font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;}
   .chips{display:flex;flex-wrap:wrap;gap:5px;}
-  .chip{font-size:12px;padding:4px 10px;border-radius:var(--radius-sm);border:1px solid;font-family:inherit;}
+  .chip{font-size:12px;padding:4px 10px;border-radius:var(--rs);border:1px solid;font-family:inherit;}
   .c-ok{background:var(--ok-bg);border-color:var(--ok-border);color:var(--ok-text);}
   .c-note{background:var(--note-bg);border-color:var(--note-border);color:var(--note-text);}
   .c-ng{background:var(--ng-bg);border-color:var(--ng-border);color:var(--ng-text);}
-  .notebox{font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;line-height:1.8;border-left:3px solid var(--note-border);}
-  .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#27500a;color:#c0dd97;padding:10px 24px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;}
+  .nb{font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--rs);padding:10px 14px;margin-top:12px;line-height:1.8;border-left:3px solid var(--note-border);}
+  .empty{text-align:center;padding:40px;color:var(--text3);font-size:14px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#27500a;color:#c0dd97;padding:10px 24px;border-radius:var(--rs);font-size:13px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;}
   .toast.show{opacity:1;}
-  @media(max-width:480px){.ce-grid{grid-template-columns:1fr;}.add-row{flex-direction:column;}}
+  @media(max-width:480px){.ceg{grid-template-columns:1fr}.arow{flex-direction:column}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">
-    <span class="logo-badge">EF WEAR</span>
-    <span class="logo-title">ファン・バッテリー互換チェッカー</span>
-  </div>
+  <div class="logo"><span class="logo-badge">EF WEAR</span><span class="logo-title">ファン・バッテリー互換チェッカー</span></div>
   <button class="admin-btn" id="adminToggle" onclick="toggleAdmin()">⚙ 管理</button>
 </header>
 <div class="main">
   <div class="admin-panel" id="adminPanel">
-    <div class="admin-title">データ管理</div>
-    <div class="admin-note">⚠ データを変更したら「保存＆HTMLダウンロード」を押して、新しいHTMLファイルをGitHubに上書きアップロードしてください。</div>
-    <div class="section-label">ファン品番</div>
-    <div class="item-list" id="fanList"></div>
-    <div class="add-row">
-      <input id="newFanId" placeholder="品番（例: 18241）">
-      <input id="newFanLabel" placeholder="名称">
-      <input id="newFanSeries" placeholder="シリーズ">
-      <button class="add-btn" onclick="addFan()">＋ 追加</button>
-    </div>
-    <div class="section-label">バッテリー品番</div>
-    <div class="item-list" id="batteryList"></div>
-    <div class="add-row">
-      <input id="newBatId" placeholder="品番">
-      <input id="newBatLabel" placeholder="名称">
-      <input id="newBatSeries" placeholder="シリーズ">
-      <button class="add-btn" onclick="addBattery()">＋ 追加</button>
-    </div>
-    <div class="section-label">互換設定</div>
-    <select class="fan-select" id="fanSelector" onchange="renderCompatEditor()">
-      <option value="">— ファンを選択して互換を編集 —</option>
-    </select>
-    <div id="compatEditor"></div>
-    <div class="section-label">注釈</div>
-    <div class="notes-area">
-      <textarea id="notesText"></textarea>
-    </div>
-    <button class="dl-btn" onclick="downloadUpdatedHTML()">💾 保存＆HTMLダウンロード</button>
+    <div style="font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">データ管理</div>
+    <div class="admin-note">⚠ 変更後は「保存＆ダウンロード」→ GitHubのindex.htmlに上書きアップロードしてください</div>
+    <div class="slabel">ファン品番</div><div class="ilist" id="fanList"></div>
+    <div class="arow"><input id="nFanId" placeholder="品番"><input id="nFanLb" placeholder="名称"><input id="nFanSr" placeholder="シリーズ"><button class="abtn" onclick="addFan()">＋</button></div>
+    <div class="slabel">バッテリー品番</div><div class="ilist" id="batList"></div>
+    <div class="arow"><input id="nBatId" placeholder="品番"><input id="nBatLb" placeholder="名称"><input id="nBatSr" placeholder="シリーズ"><button class="abtn" onclick="addBat()">＋</button></div>
+    <div class="slabel">互換設定</div>
+    <select class="fsel" id="fanSel" onchange="renderCE()"><option value="">— ファンを選択 —</option></select>
+    <div id="ceWrap"></div>
+    <div class="slabel">注釈</div>
+    <div class="narea"><textarea id="noteTxt"></textarea></div>
+    <button class="dlbtn" onclick="dlHTML()">💾 保存＆ダウンロード</button>
   </div>
-  <div class="search-card">
-    <div class="search-label">品番を検索</div>
-    <div class="search-row">
-      <input type="text" id="searchInput" placeholder="品番を入力（例: 18202、18011）">
-      <button onclick="doSearch()">検索</button>
-    </div>
-    <div class="tag-group">
-      <div class="tag-group-label">ファン品番</div>
-      <div class="tags" id="fanTags"></div>
-    </div>
-    <div class="tag-group">
-      <div class="tag-group-label">バッテリー品番</div>
-      <div class="tags" id="batteryTags"></div>
-    </div>
+  <div class="scard">
+    <div class="sl">品番を検索</div>
+    <div class="srow"><input type="text" id="si" placeholder="品番を入力（例: 18202、18011）"><button onclick="doSearch()">検索</button></div>
+    <div class="tg"><div class="tgl">ファン品番</div><div class="tags" id="fanTags"></div></div>
+    <div class="tg"><div class="tgl">バッテリー品番</div><div class="tags" id="batTags"></div></div>
     <div class="legend">
-      <div class="legend-item"><div class="ldot" style="background:#639922"></div>互換あり</div>
-      <div class="legend-item"><div class="ldot" style="background:#ba7517"></div>条件付き</div>
-      <div class="legend-item"><div class="ldot" style="background:#a32d2d"></div>非対応</div>
+      <div class="li"><div class="ld" style="background:#639922"></div>互換あり</div>
+      <div class="li"><div class="ld" style="background:#ba7517"></div>条件付き</div>
+      <div class="li"><div class="ld" style="background:#a32d2d"></div>非対応</div>
     </div>
   </div>
   <div id="result"></div>
 </div>
 <div class="toast" id="toast">ダウンロードしました ✓</div>
-
-<script id="dataScript">
+<script id="ds">
 // ===== DATA START =====
 const DB = {
   fans:[
@@ -180,7 +131,7 @@ const DB = {
     {id:"19311",label:"19311 ファン(1個)",series:"ブラシレス"},
     {id:"12011",label:"12011 ファン(1個)",series:"ブラシレス"},
     {id:"14109",label:"14109 アイスファンセット",series:"ブラシレス"},
-    {id:"19509",label:"19509 コンプリートセット",series:"ブラシレス"},
+    {id:"19509",label:"19509 コンプリートセット",series:"ブラシレス"}
   ],
   batteries:[
     {id:"18202",label:"18202 バッテリーセット",series:"18201series"},
@@ -193,138 +144,56 @@ const DB = {
     {id:"17055",label:"17055 モバイルチャージャー",series:"モバイル"},
     {id:"17065",label:"17065 モバイルチャージャー",series:"モバイル"},
     {id:"17075",label:"17075 モバイルチャージャー",series:"モバイル"},
-    {id:"市販モバイルバッテリー",label:"市販モバイルバッテリー",series:"汎用"},
+    {id:"市販モバイルバッテリー",label:"市販モバイルバッテリー",series:"汎用"}
   ],
   compat:{
-    // 18001series
-    // 画像では18001,18011,18101の3列。18202/18205/18302/18305は▲※5(条件付き5)
-    // 18221〜18233,18301,18311はO(互換あり)
-    // 16105は▲※1・5・6(18001/18011/18101)
-    // ブラシレス系・モバイル系はすべて×
     "18001":{"18202":"note5","18205":"note5","18302":"note5","18305":"note5","16105":"note1,5,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
     "18011":{"18202":"note5","18205":"note5","18302":"note5","18305":"note5","16105":"note1,5,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
     "18101":{"18202":"note5","18205":"note5","18302":"note5","18305":"note5","16105":"note1,5,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    // 18201series: 18202は同梱、18205はOK、18302/18305はOK
-    // 16105は※1・6、ブラシレス・モバイル系は×
-    "18201":{"18202":"bundled","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
+    "18201":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
     "18211":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    // 18221series
     "18221":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
     "18222":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    // 18231series
     "18231":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
     "18233":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    // 18301series: 18302は同梱、18305はOK、18202/18205は×
-    // 16105は※1・6
-    "18301":{"18202":"ng","18205":"ng","18302":"bundled","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    "18311":{"18202":"ng","18205":"ng","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
-    // ブラシレス: 16108
-    // 17025×、17045×、17055×、17065×、17075×、市販※2・4
-    // 18202〜18305,16105すべて×
-    "16108":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"note2,4"},
-    // ブラシレス: 19108デバイスセット
-    // 18202〜18305は×、16105は×
-    // 17025はO(同梱)、17045はO、17055はO※2・4、17065はO※2・4、17075はO※2・4、市販※4
-    "19108":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"bundled","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19109コンプリートセット: 同上
-    "19109":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19111ファン(1個)
-    "19111":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19209コンプリートセット
-    "19209":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19308デバイスセット: 17025同梱
-    "19308":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"bundled","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19309コンプリートセット
-    "19309":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 19311ファン(1個)
-    "19311":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"note2,4","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note4"},
-    // 12011ファン(1個)
+    "18301":{"18202":"ok","18205":"ok","18302":"bundled","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
+    "18311":{"18202":"ok","18205":"ok","18302":"ok","18305":"ok","16105":"note1,6","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"ng"},
+    "16108":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ok","17025":"ng","17045":"ng","17055":"ng","17065":"ng","17075":"ng","市販モバイルバッテリー":"note2,4"},
+    "19108":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"bundled","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19109":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19111":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note2,4"},
+    "19209":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19308":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"bundled","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19309":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19311":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"note2,4","17075":"note2,4","市販モバイルバッテリー":"note2,4"},
     "12011":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
-    // 14109アイスファンセット
     "14109":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
-    // 19509コンプリートセット
-    "19509":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"ok","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"},
+    "19509":{"18202":"ng","18205":"ng","18302":"ng","18305":"ng","16105":"ng","17025":"ok","17045":"bundled","17055":"ok","17065":"ok","17075":"ok","市販モバイルバッテリー":"note4"}
   },
   notes:"1: 16003ケーブル（FadeOut）または16103ケーブルを使用します\n2: 19103または19303スイッチケーブルを使用します\n3: 風量が少し弱まります\n4: 2.4A以上のモバイルバッテリーを使用してください\n5: 出力レベルの調整が必要です\n6: 風量が強くなりバッテリーの消耗が早くなります"
 };
 // ===== DATA END =====
-
-function getNotes(){const obj={};(DB.notes||"").split("\n").forEach(line=>{const m=line.match(/^(\S+):\s*(.+)/);if(m)obj[m[1]]="※"+m[1]+" "+m[2];});return obj;}
-function getStatusInfo(s){if(!s||s==="ng")return{cls:"c-ng",label:"非対応"};if(s==="bundled")return{cls:"c-ok",label:"同梱"};if(s.startsWith("ok"))return{cls:"c-ok",label:"互換あり"};return{cls:"c-note",label:"条件付き"};}
-function collectNoteNums(statuses){const set=new Set();statuses.forEach(s=>{if(s&&s!=="ng"&&s!=="ok"&&s!=="bundled")s.replace(/note/g,"").split(",").forEach(n=>n.trim()&&set.add(n.trim()));});return[...set].sort();}
-
-function renderTags(){
-  const ft=document.getElementById("fanTags"),bt=document.getElementById("batteryTags");
-  ft.innerHTML="";bt.innerHTML="";
-  DB.fans.forEach(f=>{const t=document.createElement("button");t.className="tag";t.textContent=f.id;t.onclick=()=>{document.getElementById("searchInput").value=f.id;doSearch();};ft.appendChild(t);});
-  DB.batteries.forEach(b=>{const t=document.createElement("button");t.className="tag";t.textContent=b.id;t.onclick=()=>{document.getElementById("searchInput").value=b.id;doSearch();};bt.appendChild(t);});
-}
-
-function doSearch(){
-  const q=document.getElementById("searchInput").value.trim().toUpperCase();
-  const el=document.getElementById("result");
-  const fan=DB.fans.find(f=>f.id.toUpperCase()===q);
-  const bat=DB.batteries.find(b=>b.id.toUpperCase()===q);
-  if(fan)showFanResult(fan,el);
-  else if(bat)showBatResult(bat,el);
-  else if(!q)el.innerHTML="";
-  else el.innerHTML=`<div class="empty">「${q}」に一致する品番が見つかりませんでした</div>`;
-}
-
-function makeChip(id,s){const{cls,label}=getStatusInfo(s);return`<span class="chip ${cls}">${id} <span style="opacity:.7;font-size:11px">${label}</span></span>`;}
-
-function buildCard(title,sub,ok,note,ng,nums,NOTES){
-  const nh=nums.length?`<div class="notebox">${nums.map(n=>NOTES[n]||("※"+n)).join("<br>")}</div>`:"";
-  return`<div class="result-card"><div class="rtitle">${title}</div><div class="rsub">${sub}</div>${ok.length?`<div class="csec"><div class="clabel">互換あり・同梱</div><div class="chips">${ok.join("")}</div></div>`:""}${note.length?`<div class="csec"><div class="clabel">条件付き互換</div><div class="chips">${note.join("")}</div></div>`:""}${ng.length?`<div class="csec"><div class="clabel">非対応</div><div class="chips">${ng.join("")}</div></div>`:""}${nh}</div>`;
-}
-
-function showFanResult(fan,el){
-  const compat=DB.compat[fan.id]||{},NOTES=getNotes(),ok=[],note=[],ng=[];
-  DB.batteries.forEach(b=>{const s=compat[b.id]||"ng",c=makeChip(b.id,s);if(s==="ng")ng.push(c);else if(s==="ok"||s==="bundled")ok.push(c);else note.push(c);});
-  el.innerHTML=buildCard(`${fan.id} — ${fan.label}`,`シリーズ: ${fan.series}`,ok,note,ng,collectNoteNums(Object.values(compat)),NOTES);
-}
-
-function showBatResult(bat,el){
-  const NOTES=getNotes(),ok=[],note=[],ng=[],allSt=[];
-  DB.fans.forEach(f=>{const s=(DB.compat[f.id]||{})[bat.id]||"ng";allSt.push(s);const c=makeChip(f.id,s);if(s==="ng")ng.push(c);else if(s==="ok"||s==="bundled")ok.push(c);else note.push(c);});
-  el.innerHTML=buildCard(`${bat.id} — ${bat.label}`,`シリーズ: ${bat.series||"汎用"}`,ok,note,ng,collectNoteNums(allSt),NOTES);
-}
-
-let adminOpen=false;
-function toggleAdmin(){adminOpen=!adminOpen;document.getElementById("adminPanel").classList.toggle("open",adminOpen);document.getElementById("adminToggle").textContent=adminOpen?"✕ 閉じる":"⚙ 管理";if(adminOpen)renderAdmin();}
-function renderAdmin(){renderFanList();renderBatteryList();renderFanSelector();document.getElementById("notesText").value=DB.notes||"";}
-function renderFanList(){document.getElementById("fanList").innerHTML=DB.fans.map((f,i)=>`<div class="item-row"><span>${f.id}</span><span class="small">${f.label}</span><span class="small">${f.series}</span><button class="del-btn" onclick="delFan(${i})">×</button></div>`).join("");}
-function renderBatteryList(){document.getElementById("batteryList").innerHTML=DB.batteries.map((b,i)=>`<div class="item-row"><span>${b.id}</span><span class="small">${b.label}</span><span class="small">${b.series}</span><button class="del-btn" onclick="delBattery(${i})">×</button></div>`).join("");}
-function renderFanSelector(){const sel=document.getElementById("fanSelector");sel.innerHTML=`<option value="">— ファンを選択して互換を編集 —</option>`+DB.fans.map(f=>`<option value="${f.id}">${f.id} ${f.label}</option>`).join("");}
-function renderCompatEditor(){
-  const fanId=document.getElementById("fanSelector").value,el=document.getElementById("compatEditor");
-  if(!fanId){el.innerHTML="";return;}
-  if(!DB.compat[fanId])DB.compat[fanId]={};
-  const opts=`<option value="ng">非対応</option><option value="ok">互換あり</option><option value="bundled">同梱</option><option value="note1">条件付き(※1)</option><option value="note2">条件付き(※2)</option><option value="note4">条件付き(※4)</option><option value="note5">条件付き(※5)</option><option value="note1,6">条件付き(※1,6)</option><option value="note1,5,6">条件付き(※1,5,6)</option><option value="note2,4">条件付き(※2,4)</option>`;
-  el.innerHTML=`<div class="compat-editor"><div class="ce-title">${fanId} の互換設定</div><div class="ce-grid">${DB.batteries.map(b=>{const cur=DB.compat[fanId][b.id]||"ng";return`<div class="ce-item"><label>${b.id}</label><select onchange="setCompat('${fanId}','${b.id}',this.value)">${opts.replace(`value="${cur}"`,`value="${cur}" selected`)}</select></div>`;}).join("")}</div></div>`;
-}
-function setCompat(fanId,batId,val){if(!DB.compat[fanId])DB.compat[fanId]={};DB.compat[fanId][batId]=val;}
-function addFan(){const id=document.getElementById("newFanId").value.trim();const label=document.getElementById("newFanLabel").value.trim();const series=document.getElementById("newFanSeries").value.trim();if(!id)return;if(DB.fans.find(f=>f.id===id)){alert("既に存在する品番です");return;}DB.fans.push({id,label:label||id,series:series||""});["newFanId","newFanLabel","newFanSeries"].forEach(x=>document.getElementById(x).value="");renderFanList();renderFanSelector();renderTags();}
-function addBattery(){const id=document.getElementById("newBatId").value.trim();const label=document.getElementById("newBatLabel").value.trim();const series=document.getElementById("newBatSeries").value.trim();if(!id)return;if(DB.batteries.find(b=>b.id===id)){alert("既に存在する品番です");return;}DB.batteries.push({id,label:label||id,series:series||""});["newBatId","newBatLabel","newBatSeries"].forEach(x=>document.getElementById(x).value="");renderBatteryList();renderTags();}
-function delFan(i){if(!confirm(`「${DB.fans[i].id}」を削除しますか？`))return;delete DB.compat[DB.fans[i].id];DB.fans.splice(i,1);renderFanList();renderFanSelector();renderTags();}
-function delBattery(i){if(!confirm(`「${DB.batteries[i].id}」を削除しますか？`))return;const batId=DB.batteries[i].id;DB.fans.forEach(f=>{if(DB.compat[f.id])delete DB.compat[f.id][batId];});DB.batteries.splice(i,1);renderBatteryList();renderTags();}
-
-function downloadUpdatedHTML(){
-  DB.notes=document.getElementById("notesText").value;
-  const src=document.documentElement.outerHTML;
-  const dataJson=JSON.stringify(DB,null,2);
-  const newData=`const DB = ${dataJson};`;
-  const updated=src.replace(/\/\/ ===== DATA START =====[\s\S]*?\/\/ ===== DATA END =====/,`// ===== DATA START =====\n${newData}\n// ===== DATA END =====`);
-  const blob=new Blob([updated],{type:"text/html;charset=utf-8"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="index.html";
-  a.click();
-  URL.revokeObjectURL(a.href);
-  const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);
-}
-
-document.getElementById("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
+function gn(){const o={};(DB.notes||"").split("\n").forEach(l=>{const m=l.match(/^(\S+):\s*(.+)/);if(m)o[m[1]]="※"+m[1]+" "+m[2];});return o;}
+function gi(s){if(!s||s==="ng")return{cls:"c-ng",lb:"非対応"};if(s==="bundled")return{cls:"c-ok",lb:"同梱"};if(s.startsWith("ok"))return{cls:"c-ok",lb:"互換あり"};return{cls:"c-note",lb:"条件付き"};}
+function cn(ss){const st=new Set();ss.forEach(s=>{if(s&&s!=="ng"&&s!=="ok"&&s!=="bundled")s.replace(/note/g,"").split(",").forEach(n=>n.trim()&&st.add(n.trim()));});return[...st].sort();}
+function mkchip(id,s){const{cls,lb}=gi(s);return`<span class="chip ${cls}">${id} <span style="opacity:.7;font-size:11px">${lb}</span></span>`;}
+function mkcard(title,sub,ok,note,ng,nums,N){const nh=nums.length?`<div class="nb">${nums.map(n=>N[n]||"※"+n).join("<br>")}</div>`:"";return`<div class="rcard"><div class="rt">${title}</div><div class="rs">${sub}</div>${ok.length?`<div class="cs"><div class="cl">互換あり・同梱</div><div class="chips">${ok.join("")}</div></div>`:""}${note.length?`<div class="cs"><div class="cl">条件付き互換</div><div class="chips">${note.join("")}</div></div>`:""}${ng.length?`<div class="cs"><div class="cl">非対応</div><div class="chips">${ng.join("")}</div></div>`:""}${nh}</div>`;}
+function renderTags(){const ft=document.getElementById("fanTags"),bt=document.getElementById("batTags");ft.innerHTML="";bt.innerHTML="";DB.fans.forEach(f=>{const t=document.createElement("button");t.className="tag";t.textContent=f.id;t.onclick=()=>{document.getElementById("si").value=f.id;doSearch();};ft.appendChild(t);});DB.batteries.forEach(b=>{const t=document.createElement("button");t.className="tag";t.textContent=b.id;t.onclick=()=>{document.getElementById("si").value=b.id;doSearch();};bt.appendChild(t);});}
+function doSearch(){const q=document.getElementById("si").value.trim().toUpperCase();const el=document.getElementById("result");const fan=DB.fans.find(f=>f.id.toUpperCase()===q);const bat=DB.batteries.find(b=>b.id.toUpperCase()===q);if(fan){const c=DB.compat[fan.id]||{},N=gn(),ok=[],note=[],ng=[];DB.batteries.forEach(b=>{const s=c[b.id]||"ng",ch=mkchip(b.id,s);if(s==="ng")ng.push(ch);else if(s==="ok"||s==="bundled")ok.push(ch);else note.push(ch);});el.innerHTML=mkcard(`${fan.id} — ${fan.label}`,`シリーズ: ${fan.series}`,ok,note,ng,cn(Object.values(c)),N);}else if(bat){const N=gn(),ok=[],note=[],ng=[],all=[];DB.fans.forEach(f=>{const s=(DB.compat[f.id]||{})[bat.id]||"ng";all.push(s);const ch=mkchip(f.id,s);if(s==="ng")ng.push(ch);else if(s==="ok"||s==="bundled")ok.push(ch);else note.push(ch);});el.innerHTML=mkcard(`${bat.id} — ${bat.label}`,`シリーズ: ${bat.series||"汎用"}`,ok,note,ng,cn(all),N);}else if(!q)el.innerHTML="";else el.innerHTML=`<div class="empty">「${q}」に一致する品番が見つかりませんでした</div>`;}
+let ao=false;
+function toggleAdmin(){ao=!ao;document.getElementById("adminPanel").classList.toggle("open",ao);document.getElementById("adminToggle").textContent=ao?"✕ 閉じる":"⚙ 管理";if(ao)renderAdmin();}
+function renderAdmin(){rFL();rBL();rFS();document.getElementById("noteTxt").value=DB.notes||"";}
+function rFL(){document.getElementById("fanList").innerHTML=DB.fans.map((f,i)=>`<div class="irow"><span>${f.id}</span><span class="sm">${f.label}</span><span class="sm">${f.series}</span><button class="dbtn" onclick="dFan(${i})">×</button></div>`).join("");}
+function rBL(){document.getElementById("batList").innerHTML=DB.batteries.map((b,i)=>`<div class="irow"><span>${b.id}</span><span class="sm">${b.label}</span><span class="sm">${b.series}</span><button class="dbtn" onclick="dBat(${i})">×</button></div>`).join("");}
+function rFS(){const s=document.getElementById("fanSel");s.innerHTML=`<option value="">— ファンを選択 —</option>`+DB.fans.map(f=>`<option value="${f.id}">${f.id} ${f.label}</option>`).join("");}
+function renderCE(){const fid=document.getElementById("fanSel").value,el=document.getElementById("ceWrap");if(!fid){el.innerHTML="";return;}if(!DB.compat[fid])DB.compat[fid]={};const op=`<option value="ng">非対応</option><option value="ok">互換あり</option><option value="bundled">同梱</option><option value="note5">条件付き(※5)</option><option value="note1,5,6">条件付き(※1,5,6)</option><option value="note1,6">条件付き(※1,6)</option><option value="note2,4">条件付き(※2,4)</option><option value="note4">条件付き(※4)</option>`;el.innerHTML=`<div class="ced"><div class="cet">${fid} の互換設定</div><div class="ceg">${DB.batteries.map(b=>{const c=DB.compat[fid][b.id]||"ng";return`<div class="cei"><label>${b.id}</label><select onchange="sc('${fid}','${b.id}',this.value)">${op.replace(`value="${c}"`,`value="${c}" selected`)}</select></div>`;}).join("")}</div></div>`;}
+function sc(fid,bid,val){if(!DB.compat[fid])DB.compat[fid]={};DB.compat[fid][bid]=val;}
+function addFan(){const id=document.getElementById("nFanId").value.trim();const lb=document.getElementById("nFanLb").value.trim();const sr=document.getElementById("nFanSr").value.trim();if(!id)return;if(DB.fans.find(f=>f.id===id)){alert("既に存在");return;}DB.fans.push({id,label:lb||id,series:sr||""});["nFanId","nFanLb","nFanSr"].forEach(x=>document.getElementById(x).value="");rFL();rFS();renderTags();}
+function addBat(){const id=document.getElementById("nBatId").value.trim();const lb=document.getElementById("nBatLb").value.trim();const sr=document.getElementById("nBatSr").value.trim();if(!id)return;if(DB.batteries.find(b=>b.id===id)){alert("既に存在");return;}DB.batteries.push({id,label:lb||id,series:sr||""});["nBatId","nBatLb","nBatSr"].forEach(x=>document.getElementById(x).value="");rBL();renderTags();}
+function dFan(i){if(!confirm(`「${DB.fans[i].id}」を削除しますか？`))return;delete DB.compat[DB.fans[i].id];DB.fans.splice(i,1);rFL();rFS();renderTags();}
+function dBat(i){if(!confirm(`「${DB.batteries[i].id}」を削除しますか？`))return;const bid=DB.batteries[i].id;DB.fans.forEach(f=>{if(DB.compat[f.id])delete DB.compat[f.id][bid];});DB.batteries.splice(i,1);rBL();renderTags();}
+function dlHTML(){DB.notes=document.getElementById("noteTxt").value;const src=document.documentElement.outerHTML;const nd=`const DB = ${JSON.stringify(DB,null,2)};`;const up=src.replace(/\/\/ ===== DATA START =====[\s\S]*?\/\/ ===== DATA END =====/,`// ===== DATA START =====\n${nd}\n// ===== DATA END =====`);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([up],{type:"text/html;charset=utf-8"}));a.download="index.html";a.click();URL.revokeObjectURL(a.href);const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+document.getElementById("si").addEventListener("keydown",e=>{if(e.key==="Enter")doSearch();});
 renderTags();
 </script>
 </body>
